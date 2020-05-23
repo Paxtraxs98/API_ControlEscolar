@@ -12,24 +12,27 @@ function saveSchedule(req,res)
         });
 }
 
-function getSchedule(req,res)
-{
-    const idSchedule = req.params.scheduleId;
-    Schedules.findById(idSchedule).populate({path:'subject'}).populate({path:'teacher',select:['name','surnameP']}).then(
-        scheduleSearch=>{
-            !scheduleSearch ? res.status(404).send({message:"Error al Mostrar Horario"}) : res.status(200).send(scheduleSearch)
-        }
-    ).catch(
-        err=>{
-            res.status(500).send({message:"Error en el Servidor"})
-        }
-    );
-}
+// function getSchedule(req,res)
+// {
+//     const idSchedule = req.params.scheduleId;
+//     Schedules.findById(idSchedule).populate({path:'subject'}).populate({path:'teacher',select:['name','surnameP']}).then(
+//         scheduleSearch=>{
+//             !scheduleSearch ? res.status(404).send({message:"Error al Mostrar Horario"}) : res.status(200).send(scheduleSearch)
+//         }
+//     ).catch(
+//         err=>{
+//             res.status(500).send({message:"Error en el Servidor"})
+//         }
+//     );
+// }
 function getSchedules(req,res)
 {    
-    Schedules.find({}).sort('subject.name').populate({path:'subject'}).populate({path:'teacher',select:['name','surnameP']}).then(
+    let idSchedule=req.params.scheduleId;
+    let find;
+    idSchedule ?  find=Schedules.findById(idSchedule) : find=Schedules.find({});
+    find.populate({path:'subject',populate: {path: 'specialite'}}).populate({path:'teacher',select:['name','surnameP']}).then(
         schedulesSearch=>{
-            !schedulesSearch ? res.status(404).send({message:"Error al Mostrar Horarios"}) : res.status(200).send(schedulesSearch)
+            !schedulesSearch ? res.status(404).send({message:"Error al Mostrar Horarios"}) : res.status(200).send({schedules:schedulesSearch})
         }
     ).catch(
         err=>{
@@ -78,7 +81,7 @@ function deleteSchedules(req,res)
 }
 module.exports = {
     saveSchedule,
-    getSchedule,
+    // getSchedule,
     getSchedules,
     updateSchedule,
     deleteSchedule,
