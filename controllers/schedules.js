@@ -30,7 +30,7 @@ function getSchedules(req,res)
     let idSchedule=req.params.scheduleId;
     let find;
     idSchedule ?  find=Schedules.findById(idSchedule) : find=Schedules.find({});
-    find.populate({path:'subject',populate: {path: 'specialite'}}).populate({path:'teacher',select:['name','surnameP']}).then(
+    find.populate({path:'subject',populate: {path: 'specialite'}}).populate({path:'teacher',select:['name','surnameP']}).sort({specialite:1}).then(
         schedulesSearch=>{
             !schedulesSearch ? res.status(404).send({message:"Error al Mostrar Horarios"}) : res.status(200).send({schedules:schedulesSearch})
         }
